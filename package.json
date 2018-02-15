@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "./runinstance.sh",
+    "start" : "node ./bin/www",
+    "dev": "./runinstance.sh",
     "postinstall": "./postinstall.sh"
   },
   "dependencies": {

@@ -14,9 +14,18 @@ $ npm install
 
 ## Running the Application
 
+### Production Environment
+
 ```
 $ cd slidekick-api
 $ npm run start
+```
+
+### Development Environment
+
+```
+$ cd slidekick-api
+$ npm run dev
 ```
 
 To stop the application <kbd>Ctrl+C</kbd> and wait for the bash prompt.
