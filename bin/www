@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
+//Why does this not have a .js file extenion?
+
 /**
  * Module dependencies.
  */
+
 
 var app = require('../app');
 var debug = require('debug')('slidekick-api:server');
@@ -20,6 +23,14 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+var io = require('socket.io')(server);
+
+io.on('connection', function (socket) {
+  console.log('a user connected');
+  //Export so app.js can use socket
+  require("../app")(socket)
+});
 
 /**
  * Listen on provided port, on all network interfaces.
