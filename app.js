@@ -76,7 +76,7 @@ MongoClient.connect(conn_url, function (err, db) {
     addUser(req.body);
     res.redirect('/');
   })
-
+  
   app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
@@ -84,8 +84,10 @@ MongoClient.connect(conn_url, function (err, db) {
   });
 
   app.use(function(err, req, res, next) {
+     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // render the error page
     res.status(err.status || 500);
     res.render('error');
   });
@@ -103,6 +105,10 @@ var port = process.env.PORT || 3010;
 mongoose.connect(config.database);
 app.set('secret', config.secret);
 
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
