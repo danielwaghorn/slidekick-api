@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Slidekick API - Register User</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            socket.emit('test', '');
+        </script>
+    </head>
+
+    <body>
+        <h1>Register User</h1>
+        <form action="/add_entry" method="POST">
+            <input type="text" placeholder="Forname" name="forename">
+            <input type="text" placeholder="Surname" name="surname">
+            <input type="text" placeholder="Email" name="email">
+            <input type="text" placeholder="Password" name="password">
+            <button type="submit">Submit</button>
+        </form>
+        <br>
+        <a href="../">Back</a>
+    </body>
+</html>

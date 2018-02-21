@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Slidekick API - View</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+        </script>
+    </head>
+
+    <body>
+        <h1>Read User DB</h1>
+        <button onclick="retreive_values()">Read User DB</button>
+        <br><br><a href="../">Back</a><br><br>
+
+        <script>
+
+            function retreive_values(){
+                socket.emit('read_db', '');
+            }
+
+            var data;
+
+            socket.on('results', function (received_data) {
+                data = received_data;
+                update_table();
+            })
+
+            var table_html = "<tr><th>Firstname</th><th>Surname</th><th>Email</th></tr>";
+
+            function update_table(){
+                for (let index = 0; index < data.length; index++) {         
+                    console.log("Forname: '"+ data[index].forename + "' Surname: '" + data[index].surname + "'");
+                    table_html = table_html + "<tr><td>" + data[index].forename + "</td><td>" + data[index].surname + "</td><td>" + data[index].email + "</td></tr>";             
+                }
+                document.getElementById("results_table").innerHTML = table_html;
+            }
+        
+        </script>
+        <table id="results_table" border="1"></table>
+    </body>
+</html>
