@@ -5,7 +5,7 @@
  * Author(s):
  * Project: slidekick-api
  * Version: 1.0
- * Date: 16th February 2018
+ * Date: 21st February 2018
  * 
  */
 

@@ -1,3 +1,14 @@
+/* 
+ * slidekick-api -> models -> user.js
+ * ----------------------------------------------------------------------------------------------------
+ * 
+ * Author(s):
+ * Project: slidekick-api
+ * Version: 1.0
+ * Date: 21st February 2018
+ * 
+ */
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
