@@ -154,6 +154,18 @@ apiRoutes.post('/authenticate', function(req, res) {
 	});
 });
 
+apiRoutes.post('/register', function(req, res){
+
+  if(req.body.forename != null && req.body.surname != null && req.body.email != null && req.body.password != null){
+    var addUserRequest = addUser(req.body);
+    res.json({ success: true, message: addUserRequest.message });
+  }
+  else{
+    res.json({ success: false, message: 'Invalid request.' });
+  }
+
+})
+
 apiRoutes.use(function(req, res, next) {
 
 	var token = req.body.token || req.param('token') || req.headers['x-access-token'];
@@ -192,12 +204,15 @@ function addUser(newUserDetails){
   
 	newUser.save(function(err) {
 	  if (err){
-      console.log(err);
+      console.log('A user is already registered with this email address!');
     }
     else{
-      console.log('Created new user!');
+      console.log('User registered successfully.');
     }
   });
+
+  var obj = { success: true, message: 'User registered successfully.' };
+  return obj;
 }
 
 // Launch
