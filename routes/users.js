@@ -87,10 +87,17 @@ router.post('/login', function (req, res, next) {
         res.json({ success: true, user: u.toJSON() });
       } else {
         // Invalid Password
+        if (!(error instanceof Object)) error = {};
+        error.message = 'Invalid credentials';
         return _loginError(req, res, next, error);
       }
     });
   });
+});
+
+
+router.post('/refresh', function (req, res, next) {
+
 });
 
 /**
@@ -109,7 +116,7 @@ router.use(function(req, res, next) {
   var token = req.body.token || req.param('token') || req.headers['Authorization'];
 
   // Ignore token requirement for registration and login
-  const unprotectedRoutes = ['/auth/register', '/auth/login'];
+  const unprotectedRoutes = ['/auth/register', '/auth/login', '/auth/refresh'];
   if (unprotectedRoutes.indexOf(req.path) !== -1) return next();
 
   // Verify that token exists and is valid;
