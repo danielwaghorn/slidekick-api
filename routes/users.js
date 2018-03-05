@@ -102,6 +102,7 @@ router.post('/register', function (req, res, next) {
     res.json({
       success: true,
       message: 'User Registration Successful',
+      user: u.toJSON(),
     });
   });
 });
