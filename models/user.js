@@ -24,21 +24,18 @@ var UserSchema = new Schema({
 });
 
 UserSchema.pre('save', function(next) {
-    var user = this;
-
-    UserModel.findOne({email: user.email}, function(err, userExists) {
-        if(userExists){
+    UserModel.findOne({ email: this.email }, function(err, userExists) {
+        if (userExists) {
             return next(new Error('A user already exists for this email address!'));
-        }
-        else{
-            if (!user.isModified('password')) return next();
+        } else {
+            if (!this.isModified('password')) return next();
 
             bcrypt.genSalt(SALT_WF, function(err, salt) {
                 if (err) return next(err);
         
-                bcrypt.hash(user.password, salt, function(err, hash) {
+                bcrypt.hash(this.password, salt, function(err, hash) {
                     if (err) return next(err);
-                    user.password = hash;
+                    this.password = hash;
                     next();
                 });
             });
@@ -46,13 +43,21 @@ UserSchema.pre('save', function(next) {
     });
 });
 
-UserSchema.methods.comparePassword = function(candidatePassword, cb) {
+if (!UserSchema.options.toJSON) UserSchema.options.toJSON = {};
+UserSchema.options.toJSON.transform = function (doc, ret, options) {
+  // remove the _id of every document before returning the result
+  ret.id = ret._id;
+  delete ret._id;
+  delete ret.password;
+  delete ret.__v;
+  return ret;
+}
+
+UserSchema.methods.validatePassword = function(candidatePassword, fn) {
     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-        if (err) return cb(err);
-        cb(null, isMatch);
+        if (err) return fn(err, isMatch);
+        fn(null, isMatch);
     });
 };
-
-var UserModel = mongoose.model('User',UserSchema);
 
 module.exports = mongoose.model('User', UserSchema);
