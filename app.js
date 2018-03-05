@@ -29,9 +29,7 @@ var db = require('mongodb').Db;
 var conn_url = "mongodb://localhost:27017/admin"
 
 // Requirements -> Auth
-var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
-var User = require('./models/user'); // get our mongoose model
 
 // Requirements -> Routing
 var index = require('./routes/index');
@@ -100,7 +98,7 @@ module.exports = app;
  * ----------------------------------------------------------------------------------------------------
  */
 
-// Congiguration
+// Configuration
 var port = process.env.PORT || 3010;
 mongoose.connect(config.database);
 app.set('secret', config.secret);
@@ -115,10 +113,10 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 
 // Routing
-var apiRoutes = express.Router(); 
+app.use('/api/user', users);
 
 // Authentication
-apiRoutes.post('/authenticate', function(req, res) {
+/* apiRoutes.post('/authenticate', function(req, res) {
 
 	User.findOne({email: req.body.email}, function(err, user) {
 		if (err) throw err;
@@ -170,6 +168,10 @@ apiRoutes.use(function(req, res, next) {
 
 	var token = req.body.token || req.param('token') || req.headers['x-access-token'];
 
+  // Ignore token requirement for registration and login
+  const unprotectedRoutes = ['/auth/register', '/auth/login'];
+  if (unprotectedRoutes.indexOf(req.path) !== -1) return next();
+
 	if (token) {
 		jwt.verify(token, app.get('secret'), function(err, decoded) {			
 			if (err) {
@@ -213,7 +215,7 @@ function addUser(newUserDetails){
 
   var obj = { success: true, message: 'User registered successfully.' };
   return obj;
-}
+} */
 
 // Launch
 app.listen(port);
