@@ -6,6 +6,49 @@ const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const User = require('../models/user.js');
 
 /**
+ * Token Middleware
+ *
+ * Validates a JWT token presented on Authorization
+ * header.
+ *
+ * @param  {Object} req   Express request object
+ * @param  {Object} res   Express response object
+ * @param  {Function} next Closure for next request
+ * @return {void}
+ */
+router.use(function(req, res, next) {
+    // Ignore token requirement for registration and login
+    if (['/register', '/login'].indexOf(req.path) !== -1) return next();
+
+    var token = req.body.token || req.param('token') || req.headers['authorization'];
+    if (token === undefined) token = '';
+    token = token.replace("Bearer ","");
+
+    // Verify that token exists and is valid;
+    if (token) {
+        jwt.verify(token, req.app.get('secret'), function(err, decoded) {
+            if (err) return res.status(403).json({ success: false, message: err.message });
+            User.findById(decoded.id, (err, user) => {
+                if (user) {
+                    req.user = user;
+                    return next();
+                }
+
+                res.status(403).send({
+                  success: false,
+                  message: 'Bad Token',
+                });
+            })
+        });
+    } else {
+        return res.status(403).send({
+            success: false,
+            message: 'Bad Token',
+        });
+    }
+});
+
+/**
  * _loginError
  *
  * Default response for a login failure.
@@ -97,41 +140,9 @@ router.post('/login', function (req, res, next) {
 
 
 router.post('/refresh', function (req, res, next) {
-
-});
-
-/**
- * Token Middleware
- *
- * Validates a JWT token presented on Authorization
- * header.
- * 
- * @param  {Object} req   Express request object
- * @param  {Object} res   Express response object
- * @param  {Function} next Closure for next request
- * @return {void}
- */
-router.use(function(req, res, next) {
-
-  var token = req.body.token || req.param('token') || req.headers['Authorization'];
-
-  // Ignore token requirement for registration and login
-  const unprotectedRoutes = ['/auth/register', '/auth/login', '/auth/refresh'];
-  if (unprotectedRoutes.indexOf(req.path) !== -1) return next();
-
-  // Verify that token exists and is valid;
-  if (token) {
-    jwt.verify(token, req.app.get('secret'), function(err, decoded) {     
-      if (err) return res.json({ success: false, message: err.message });
-      req.decoded = decoded;  
-      next();
-    });
-  } else {
-    return res.status(403).send({ 
-      success: false, 
-      message: 'Bad Token',
-    });
-  }
+  const token = jwt.sign(req.user.toJSON(), req.app.get('secret'), { algorithm: 'HS256'});
+  res.header('Authorization', `Bearer ${token}`);
+  res.json({ user: req.user.toJSON() });
 });
 
 module.exports = router;
