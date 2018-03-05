@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const app = express();
 
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
@@ -26,40 +25,51 @@ router.post('/register', function (req, res, next) {
     if (err) {
       res.status(400);
       return res.json({
-        status: false,
+        success: false,
         message: err.message,
       });
     }
 
+    // Return response with JWT token on header
+    const token = jwt.sign(u.toJSON(), req.app.get('secret'), { algorithm: 'HS256'});
+    res.header('Authorization', `Bearer ${token}`);
     res.status(201);
     res.json({
-      status: true,
+      success: true,
       message: 'User Registration Successful',
     });
   });
 
-  // Token Middleware
+  /**
+   * Token Middleware
+   *
+   * Validates a JWT token presented on Authorization
+   * header.
+   * 
+   * @param  {Object} req   Express request object
+   * @param  {Object} res   Express response object
+   * @param  {Function} next Closure for next request
+   * @return {void}
+   */
   router.use(function(req, res, next) {
 
-    var token = req.body.token || req.param('token') || req.headers['x-access-token'];
+    var token = req.body.token || req.param('token') || req.headers['Authorization'];
 
     // Ignore token requirement for registration and login
     const unprotectedRoutes = ['/auth/register', '/auth/login'];
     if (unprotectedRoutes.indexOf(req.path) !== -1) return next();
 
+    // Verify that token exists and is valid;
     if (token) {
-      jwt.verify(token, app.get('secret'), function(err, decoded) {     
-        if (err) {
-          return res.json({ success: false, message: 'Could not authenticate.' });    
-        }
-          
+      jwt.verify(token, req.app.get('secret'), function(err, decoded) {     
+        if (err) return res.json({ success: false, message: err.message });
         req.decoded = decoded;  
         next();
       });
     } else {
       return res.status(403).send({ 
         success: false, 
-        message: 'No token'
+        message: 'Bad Token',
       });
     }
   });
