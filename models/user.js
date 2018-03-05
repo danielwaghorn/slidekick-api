@@ -2,7 +2,7 @@
  * slidekick-api -> models -> user.js
  * ----------------------------------------------------------------------------------------------------
  * 
- * Author(s):
+ * Author(s): 
  * Project: slidekick-api
  * Version: 1.0
  * Date: 21st February 2018
