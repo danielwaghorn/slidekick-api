@@ -139,7 +139,6 @@ router.post('/login', function (req, res, next) {
   });
 });
 
-
 router.post('/refresh', function (req, res, next) {
   const token = jwt.sign(req.user.toJSON(), req.app.get('secret'), { algorithm: 'HS256'});
   res.header('Authorization', `Bearer ${token}`);

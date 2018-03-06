@@ -34,11 +34,12 @@ var config = require('./config'); // get our config file
 // Requirements -> Routing
 var index = require('./routes/index');
 var users = require('./routes/users');
+var slidedecks = require('./routes/slidedecks');
 var insert = require('./config/insert');
 var view = require('./config/view');
 
 /* 
- * MongoClient                                                                                    [SEB]
+ * MongoClient                                                                                    
  * ----------------------------------------------------------------------------------------------------
  */
 
@@ -94,7 +95,7 @@ MongoClient.connect(conn_url, function (err, db) {
 module.exports = app;
 
  /*  
- * JWT                                                                                         [RONNIE]
+ * JWT                                                                                         
  * ----------------------------------------------------------------------------------------------------
  */
 
@@ -114,6 +115,7 @@ app.use(morgan('dev'));
 
 // Routing
 app.use('/api/user', users);
+app.use('/api/slidedecks', slidedecks);
 
 // Authentication
 /* apiRoutes.post('/authenticate', function(req, res) {

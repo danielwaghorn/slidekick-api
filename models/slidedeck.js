@@ -10,6 +10,7 @@
  */
 
 var mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
 var Schema = mongoose.Schema;
 
 /* 
@@ -31,12 +32,12 @@ var ElementSchema = new Schema({
  */
 
 var SlideSchema = new Schema({
-    backgroundColor: { type: String, required: true },
+    backgroundColour: { type: String, required: true },
     elements: [ElementSchema]
 });
 
 /* 
- * Presentation                                                                                   
+ * Slidedeck                                                                                   
  * ----------------------------------------------------------------------------------------------------
  */
 
@@ -46,13 +47,14 @@ var SlidedeckSchema = new Schema({
     slides: [SlideSchema]
 });
 
+SlidedeckSchema.plugin(uniqueValidator);
+
 SlidedeckSchema.pre('save', function(next) {
     var slidedeck = this;
 
     SlidedeckModel.findOne({ownerId: slidedeck.ownerId, title: slidedeck.title}, function(err, slidedeckExists){
         if(slidedeckExists){
             return next(new Error('This user already has a presentation with this title.'));
-            console.log('User + title already exists!');
         }
         else{
             next();
@@ -61,4 +63,4 @@ SlidedeckSchema.pre('save', function(next) {
 });
 
 var SlidedeckModel = mongoose.model('Slidedeck', SlidedeckSchema);
-module.exports = mongoose.model('Slidedeck', SlidedeckSchema);
+module.exports = SlidedeckModel;
