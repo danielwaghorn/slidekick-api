@@ -19,6 +19,16 @@
             <input type="text" placeholder="Password" name="password">
             <button type="submit">Submit</button>
         </form>
+
+        <h1>Create new presentation</h1>
+            <form action="/api/slides/new" method="POST">
+                <input type="text" placeholder="token" name="token">
+                <input type="text" placeholder="title" name="title">
+                <input type="text" placeholder="template" name="template">
+                <input type="text" placeholder="userid" name="userid">
+                <button type="submit">Save</button>
+            </form>
+            <br>
         <br>
         <a href="../">Back</a>
     </body>
