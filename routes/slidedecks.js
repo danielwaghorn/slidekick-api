@@ -196,7 +196,7 @@ router.get('/retrieve', function (req, res, next) {
  * Save Slidedeck (Update)
  *
  * GET /api/slidedecks/save
- * Expects: Token of destination slidedeck
+ * Expects: ID of target slidedeck
  * Token: Yes
  *
  * @param  {Object} req   Express request object
@@ -233,10 +233,47 @@ router.post('/save', function (req, res, next) {
 });
 
 /**
+ * Delete Slidedeck
+ *
+ * GET /api/slidedecks/delete
+ * Expects: ID of target slidedeck
+ * Token: Yes
+ *
+ * @param  {Object} req   Express request object
+ * @param  {Object} res   Express response object
+ * @param  {Function} next Closure for next request
+ */
+router.get('/delete', function (req, res, next) {
+
+    id = req.headers.slidedeckid;
+
+    Slidedeck.findById(id, function(err, slidedeck){
+        if(err) {
+            res.status(400);
+            return res.json({
+                success: false,
+                message: err.message
+            });s
+        }
+
+        slidedeck.remove(function (err) {
+            if (err) return handleError(err);
+            res.status(200);
+            res.json({
+                success: true,
+                message: 'Deleted Slidedeck'
+            });
+        });
+
+    });
+
+});
+
+/**
  * Rename Slidedeck
  *
  * GET /api/slidedecks/rename
- * Expects: Token of destination slidedeck and new title
+ * Expects: ID of target slidedeck and new title
  * Token: Yes
  *
  * @param  {Object} req   Express request object
@@ -274,7 +311,6 @@ router.post('/rename', function (req, res, next) {
                     message: err.message,
                 });
             }
-
 
             res.status(200);
             res.json({
