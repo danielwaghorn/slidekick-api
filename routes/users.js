@@ -139,6 +139,9 @@ router.post('/login', function (req, res, next) {
   });
 });
 
+router.get('/me', function (req, res, next) {
+  res.json({ user: req.user.toJSON() });
+})
 
 router.post('/refresh', function (req, res, next) {
   const token = jwt.sign(req.user.toJSON(), req.app.get('secret'), { algorithm: 'HS256'});
