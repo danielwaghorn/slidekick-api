@@ -34,11 +34,12 @@ var config = require('./config'); // get our config file
 // Requirements -> Routing
 var index = require('./routes/index');
 var users = require('./routes/users');
+var slidedecks = require('./routes/slidedecks');
 var insert = require('./config/insert');
 var view = require('./config/view');
 
 /* 
- * MongoClient                                                                                    [SEB]
+ * MongoClient                                                                                    
  * ----------------------------------------------------------------------------------------------------
  */
 
@@ -94,7 +95,7 @@ MongoClient.connect(conn_url, function (err, db) {
 module.exports = app;
 
  /*  
- * JWT                                                                                         [RONNIE]
+ * JWT                                                                                         
  * ----------------------------------------------------------------------------------------------------
  */
 
@@ -114,108 +115,7 @@ app.use(morgan('dev'));
 
 // Routing
 app.use('/api/user', users);
-
-// Authentication
-/* apiRoutes.post('/authenticate', function(req, res) {
-
-	User.findOne({email: req.body.email}, function(err, user) {
-		if (err) throw err;
-
-		if (!user) {
-			res.json({ success: false, message: 'User not found.' });
-    }
-    else if (user) {
-
-      var pwMatch = user.comparePassword(req.body.password, function(err, pwMatch) {
-        if (err) throw err;
-        
-        if(pwMatch){
-          var payload = {
-            admin: user.admin	
-          }
-          
-          var token = jwt.sign(payload, app.get('secret'), {
-            expiresIn: 43200 // 12 hours
-          });
-  
-          res.json({
-            success: true,
-            message: 'Authentication successful!',
-            token: token
-          });
-        }
-        else{
-          res.json({ success: false, message: 'Authentication failure!' });
-        }
-      });
-		}
-	});
-});
-
-apiRoutes.post('/register', function(req, res){
-
-  if(req.body.forename != null && req.body.surname != null && req.body.email != null && req.body.password != null){
-    var addUserRequest = addUser(req.body);
-    res.json({ success: true, message: addUserRequest.message });
-  }
-  else{
-    res.json({ success: false, message: 'Invalid request.' });
-  }
-
-})
-
-apiRoutes.use(function(req, res, next) {
-
-	var token = req.body.token || req.param('token') || req.headers['x-access-token'];
-
-  // Ignore token requirement for registration and login
-  const unprotectedRoutes = ['/auth/register', '/auth/login'];
-  if (unprotectedRoutes.indexOf(req.path) !== -1) return next();
-
-	if (token) {
-		jwt.verify(token, app.get('secret'), function(err, decoded) {			
-			if (err) {
-				return res.json({ success: false, message: 'Could not authenticate.' });		
-			} else {
-				req.decoded = decoded;	
-				next();
-			}
-		});
-
-  }
-  else {
-		return res.status(403).send({ 
-			success: false, 
-			message: 'No token'
-		});
-	}
-	
-});
-
-app.use('/api', apiRoutes);
-
-// Registration
-function addUser(newUserDetails){
-  var newUser = new User({ 
-    forename: newUserDetails.forename, 
-    surname: newUserDetails.surname,
-    email: newUserDetails.email,
-		password: newUserDetails.password,
-		admin: false
-  });
-  
-	newUser.save(function(err) {
-	  if (err){
-      console.log('A user is already registered with this email address!');
-    }
-    else{
-      console.log('User registered successfully.');
-    }
-  });
-
-  var obj = { success: true, message: 'User registered successfully.' };
-  return obj;
-} */
+app.use('/api/slidedecks', slidedecks);
 
 // Launch
 app.listen(port);
