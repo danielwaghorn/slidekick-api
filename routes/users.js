@@ -121,6 +121,13 @@ router.post('/register', function (req, res, next) {
 router.post('/login', function (req, res, next) {
   // Try to find a corresponding User object
   User.findOne({ email: req.body.email }).exec((err, u) => {
+    if (!u) {
+      if (err === null) {
+        err = {}
+        err.message = 'Invalid credentials, please try again.'
+      }
+      return _loginError(req, res, next, err);
+    }
 
     // Verify that their password is valid;
     u.validatePassword(req.body.password, function (error, isValid) {
@@ -140,6 +147,7 @@ router.post('/login', function (req, res, next) {
 });
 
 router.get('/me', function (req, res, next) {
+  if (!req.user) return _loginError();
   res.json({ user: req.user.toJSON() });
 })
 
