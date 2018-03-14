@@ -25,24 +25,24 @@ router.use(function (req, res, next) {
     // Verify that token exists and is valid;
   if (token) {
     jwt.verify(token, req.app.get('secret'), function (err, decoded) {
-        if (err) return res.status(403).json({ success: false, message: err.message })
-        User.findById(decoded.id, (err, user) => {
+      if (err) return res.status(403).json({ success: false, message: err.message })
+      User.findById(decoded.id, (err, user) => {
           if (user) {
-                req.user = user
-                return next()
-              }
+            req.user = user
+            return next()
+          }
 
           res.status(403).send({
-                success: false,
-                message: 'Bad Token'
-              })
+            success: false,
+            message: 'Bad Token'
+          })
         })
-      })
+    })
   } else {
     return res.status(403).send({
-        success: false,
-        message: 'Bad Token'
-      })
+      success: false,
+      message: 'Bad Token'
+    })
   }
 })
 
@@ -82,9 +82,9 @@ router.post('/new', function (req, res, next) {
   s.title = req.body.title
   s.slides =
   [
-      {
-        backgroundColour: '#FFFFFF',
-        elements: [
+    {
+      backgroundColour: '#FFFFFF',
+      elements: [
           {
             id: 0,
             type: 'TEXT',
@@ -98,16 +98,16 @@ router.post('/new', function (req, res, next) {
             }
           }
         ]
-      }
+    }
   ]
 
   s.save(function (err, newPresentation) {
     if (err) {
       res.status(400)
       return res.json({
-          success: false,
-          message: err.message
-        })
+        success: false,
+        message: err.message
+      })
     }
 
     res.header('NewPresentationId', newPresentation._id)
@@ -135,9 +135,9 @@ router.get('/list', function (req, res, next) {
     if (err) {
       res.status(400)
       return res.json({
-          success: false,
-          message: err.message
-        })
+        success: false,
+        message: err.message
+      })
     }
 
     res.status(200)
@@ -167,19 +167,19 @@ router.get('/retrieve', function (req, res, next) {
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
-        res.status(400)
-        return res.json({
+      res.status(400)
+      return res.json({
           success: false,
           message: err.message
         })
-      }
+    }
 
     res.status(200)
     res.json({
-        success: true,
-        message: 'Retrieved Presentation',
-        presentation: presentation
-      })
+      success: true,
+      message: 'Retrieved Presentation',
+      presentation: presentation
+    })
   })
 })
 
@@ -199,24 +199,24 @@ router.post('/save', function (req, res, next) {
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
-        res.status(400)
-        return res.json({
+      res.status(400)
+      return res.json({
           success: false,
           message: err.message
         })
-      }
+    }
 
     presentation.slides = req.body.slides
 
     presentation.save(function (err, updatedPresentation) {
-        if (err) return handleError(err)
-        res.status(200)
-        res.json({
-            success: true,
-            message: 'Saved Changes to presentation',
-            presentation: updatedPresentation
-          })
-      })
+      if (err) return handleError(err)
+      res.status(200)
+      res.json({
+          success: true,
+          message: 'Saved Changes to presentation',
+          presentation: updatedPresentation
+        })
+    })
   })
 })
 
@@ -236,21 +236,21 @@ router.get('/delete', function (req, res, next) {
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
-        res.status(400)
-        return res.json({
+      res.status(400)
+      return res.json({
           success: false,
           message: err.message
         }); s
-      }
+    }
 
     presentation.remove(function (err) {
-        if (err) return handleError(err)
-        res.status(200)
-        res.json({
+      if (err) return handleError(err)
+      res.status(200)
+      res.json({
           success: true,
           message: 'Deleted presentation'
         })
-      })
+    })
   })
 })
 
@@ -278,31 +278,31 @@ router.post('/rename', function (req, res, next) {
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
-        res.status(400)
-        return res.json({
+      res.status(400)
+      return res.json({
           success: false,
           message: 'Likely cause: presentation does not exist. Full error: ' + err.message
         })
-      }
+    }
 
     presentation.title = req.body.title
 
     presentation.save(function (err, updatedPresentation) {
-        if (err) {
-            res.status(400)
-            return res.json({
+      if (err) {
+          res.status(400)
+          return res.json({
               success: false,
               message: err.message
             })
-          }
+        }
 
-        res.status(200)
-        res.json({
-            success: true,
-            message: 'Renamed the presentation',
-            presentation: updatedPresentation
-          })
-      })
+      res.status(200)
+      res.json({
+          success: true,
+          message: 'Renamed the presentation',
+          presentation: updatedPresentation
+        })
+    })
   })
 })
 
