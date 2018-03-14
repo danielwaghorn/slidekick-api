@@ -38,8 +38,8 @@ var presentations = require('./routes/presentations')
 var insert = require('./config/insert')
 var view = require('./config/view')
 
-/* 
- * MongoClient                                                                                    
+/*
+ * MongoClient
  * ----------------------------------------------------------------------------------------------------
  */
 
@@ -94,8 +94,8 @@ MongoClient.connect(conn_url, function (err, db) {
 
 module.exports = app
 
- /*  
- * JWT                                                                                         
+ /*
+ * JWT
  * ----------------------------------------------------------------------------------------------------
  */
 
