@@ -57,7 +57,7 @@ router.use(function(req, res, next) {
  * @param  {Function} next Closure for next request
  */
 const _loginError = (req, res, next, err) => {
-  res.status(400);
+  res.status(403);
   return res.json({
     success: false,
     message: 'Please supply valid credentials',
