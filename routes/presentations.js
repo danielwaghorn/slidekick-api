@@ -2,6 +2,7 @@ const jwtMiddleware = require('./middleware/auth')
 
 const express = require('express')
 const router = express.Router()
+const mongoose = require('mongoose')
 
 const User = require('../models/user.js')
 const Presentation = require('../models/presentation')
@@ -86,7 +87,7 @@ router.post('/new', function (req, res, next) {
  * @param  {Function} next Closure for next request
  */
 router.get('/', function (req, res, next) {
-  Presentation.find({ 'ownerId': req.user.id }, function (err, presentations) {
+  Presentation.find({ 'userId': mongoose.Types.ObjectId(req.user.id) }, function (err, presentations) {
     if (err) {
       res.status(400)
       return res.json({
@@ -99,7 +100,7 @@ router.get('/', function (req, res, next) {
     res.json({
       success: true,
       message: 'Retrieved Presentations for User',
-      presentations: presentations
+      presentations: presentations.map(p => p.tolistJSON())
     })
   })
 })
