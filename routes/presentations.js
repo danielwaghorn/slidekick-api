@@ -85,8 +85,8 @@ router.post('/new', function (req, res, next) {
  * @param  {Object} res   Express response object
  * @param  {Function} next Closure for next request
  */
-router.get('/list', function (req, res, next) {
-  Presentation.find({ 'ownerId': req.user._id }, function (err, presentations) {
+router.get('/', function (req, res, next) {
+  Presentation.find({ 'ownerId': req.user.id }, function (err, presentations) {
     if (err) {
       res.status(400)
       return res.json({

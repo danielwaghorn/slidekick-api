@@ -115,7 +115,7 @@ app.use(morgan('dev'))
 
 // Routing
 app.use('/api/user', users)
-app.use('/api/spresentations', presentations)
+app.use('/api/presentations', presentations)
 
 // Launch
 app.listen(port)
