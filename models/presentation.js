@@ -70,4 +70,12 @@ PresentationModel.prototype.tolistJSON = function () {
   }
 }
 
+if (!PresentationSchema.options.toJSON) PresentationSchema.options.toJSON = {}
+PresentationSchema.options.toJSON.transform = function (doc, ret, options) {
+  // remove the _id of every document before returning the result
+  ret.id = ret._id
+  delete ret._id
+  return ret
+}
+
 module.exports = PresentationModel
