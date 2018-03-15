@@ -116,9 +116,8 @@ router.get('/', function (req, res, next) {
  * @param  {Object} res   Express response object
  * @param  {Function} next Closure for next request
  */
-router.get('/retrieve', function (req, res, next) {
-  console.log(req)
-  id = req.headers.presentationid
+router.get('/:id', function (req, res, next) {
+  id = req.params.id
   console.log(id)
 
   Presentation.findById(id, function (err, presentation) {
