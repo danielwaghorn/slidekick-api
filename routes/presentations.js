@@ -1,7 +1,7 @@
+const jwtMiddleware = require('./middleware/auth')
+
 const express = require('express')
 const router = express.Router()
-
-const jwt = require('jsonwebtoken') // used to create, sign, and verify tokens
 
 const User = require('../models/user.js')
 const Presentation = require('../models/presentation')
@@ -17,52 +17,7 @@ const Presentation = require('../models/presentation')
  * @param  {Function} next Closure for next request
  * @return {void}
  */
-router.use(function (req, res, next) {
-  var token = req.body.token || req.param('token') || req.headers['authorization']
-  if (token === undefined) token = ''
-  token = token.replace('Bearer ', '')
-
-    // Verify that token exists and is valid;
-  if (token) {
-    jwt.verify(token, req.app.get('secret'), function (err, decoded) {
-      if (err) return res.status(403).json({ success: false, message: err.message })
-      User.findById(decoded.id, (err, user) => {
-          if (user) {
-            req.user = user
-            return next()
-          }
-
-          res.status(403).send({
-            success: false,
-            message: 'Bad Token'
-          })
-        })
-    })
-  } else {
-    return res.status(403).send({
-      success: false,
-      message: 'Bad Token'
-    })
-  }
-})
-
-/**
- * _loginError
- *
- * Default response for a login failure.
- *
- * @param  {Object} req   Express request object
- * @param  {Object} res   Express response object
- * @param  {Function} next Closure for next request
- */
-const _loginError = (req, res, next, err) => {
-  res.status(400)
-  return res.json({
-    success: false,
-    message: 'Please supply valid credentials',
-    error: err.message
-  })
-}
+router.use(jwtMiddleware)
 
 /**
  * New Presentation Route
@@ -78,7 +33,7 @@ const _loginError = (req, res, next, err) => {
 router.post('/new', function (req, res, next) {
   const s = new Presentation()
 
-  s.ownerId = req.body.ownerId
+  s.ownerId = req.user.id
   s.title = req.body.title
   s.slides =
   [
