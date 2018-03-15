@@ -62,4 +62,12 @@ PresentationSchema.pre('save', function (next) {
 })
 
 var PresentationModel = mongoose.model('Presentation', PresentationSchema)
+
+PresentationModel.prototype.tolistJSON = function () {
+  return {
+    id: this._id,
+    title: this.title
+  }
+}
+
 module.exports = PresentationModel
