@@ -31,31 +31,12 @@ router.use(jwtMiddleware)
  * @param  {Object} res   Express response object
  * @param  {Function} next Closure for next request
  */
-router.post('/new', function (req, res, next) {
+router.post('/', function (req, res, next) {
   const s = new Presentation()
 
   s.ownerId = req.user.id
   s.title = req.body.title
-  s.slides =
-  [
-    {
-      backgroundColour: '#FFFFFF',
-      elements: [
-          {
-            id: 0,
-            type: 'TEXT',
-            properties: {
-              x: '30px',
-              y: '30px',
-              fill: '#000000',
-              fontFamily: 'Verdana',
-              fontSize: '20px',
-              content: 'Title goes here'
-            }
-          }
-        ]
-    }
-  ]
+  s.slides = req.body.slides
 
   s.save(function (err, newPresentation) {
     if (err) {
@@ -66,11 +47,12 @@ router.post('/new', function (req, res, next) {
       })
     }
 
-    res.header('NewPresentationId', newPresentation._id)
+    res.header('Location', `/api/presentations/${newPresentation._id}`)
     res.status(201)
     res.json({
       success: true,
-      message: 'New Presentation Created Successfully'
+      message: 'New Presentation Created Successfully',
+      presentation: newPresentation.toJSON(),
     })
   })
 })
@@ -118,7 +100,6 @@ router.get('/', function (req, res, next) {
  */
 router.get('/:id', function (req, res, next) {
   id = req.params.id
-  console.log(id)
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
@@ -139,9 +120,45 @@ router.get('/:id', function (req, res, next) {
 })
 
 /**
+ * Retrieve IDs of All Presentations for a User
+ *
+ * GET /api/presentations/retrieve
+ * Expects: Token of desired presentation
+ * Token: Yes
+ *
+ * @param  {Object} req   Express request object
+ * @param  {Object} res   Express response object
+ * @param  {Function} next Closure for next request
+ */
+router.post('/new', function (req, res, next) {
+  const p = new Presentation()
+
+  p.title = 'New Presentation'
+  p.slides = []
+  p.userId = mongoose.Types.ObjectId(req.user.id)
+
+  p.save(function (err) {
+    if (err) {
+      res.status(400)
+      return res.json({
+        success: false,
+        message: err.message
+      })
+    }
+
+    res.status(201)
+    res.json({
+      success: true,
+      message: 'Presentation created successfully.',
+      user: p.toJSON()
+    })
+  })
+})
+
+/**
  * Save Presentation (Update)
  *
- * GET /api/presentations/save
+ * PUT /api/presentations/:id
  * Expects: ID of target presentation
  * Token: Yes
  *
@@ -149,8 +166,8 @@ router.get('/:id', function (req, res, next) {
  * @param  {Object} res   Express response object
  * @param  {Function} next Closure for next request
  */
-router.post('/save', function (req, res, next) {
-  id = req.headers.presentationid
+router.put('/:id', function (req, res, next) {
+  id = req.params.id
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
@@ -161,6 +178,7 @@ router.post('/save', function (req, res, next) {
         })
     }
 
+    presentation.title = req.body.title
     presentation.slides = req.body.slides
 
     presentation.save(function (err, updatedPresentation) {
@@ -186,8 +204,8 @@ router.post('/save', function (req, res, next) {
  * @param  {Object} res   Express response object
  * @param  {Function} next Closure for next request
  */
-router.get('/delete', function (req, res, next) {
-  id = req.headers.presentationid
+router.delete('/:id', function (req, res, next) {
+  id = req.params.presentationid
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
@@ -219,7 +237,7 @@ router.get('/delete', function (req, res, next) {
  * @param  {Object} req   Express request object
  * @param  {Object} res   Express response object
  * @param  {Function} next Closure for next request
- */
+ *
 router.post('/rename', function (req, res, next) {
   if (req.body.presentationid == null || req.body.title == null) {
     res.status(400)
@@ -259,6 +277,6 @@ router.post('/rename', function (req, res, next) {
         })
     })
   })
-})
+}) */
 
 module.exports = router
