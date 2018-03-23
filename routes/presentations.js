@@ -205,7 +205,7 @@ router.put('/:id', function (req, res, next) {
  * @param  {Function} next Closure for next request
  */
 router.delete('/:id', function (req, res, next) {
-  id = req.params.presentationid
+  id = req.params.id
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
