@@ -111,7 +111,7 @@ router.put('/:id', function (req, res, next) {
     }
 
     presentation.title = req.body.title
-    presentation.slides = req.body.slides
+    if (req.body.slides) presentation.slides = req.body.slides
 
     presentation.save(function (err, updatedPresentation) {
       if (err) return handleError(err)
