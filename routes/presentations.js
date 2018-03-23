@@ -60,7 +60,7 @@ router.post('/', function (req, res, next) {
 /**
  * Retrieve IDs of All Presentations for a User
  *
- * GET /api/presentations/list
+ * GET /api/presentations
  * Expects: N/A
  * Token: Yes
  *
@@ -69,7 +69,7 @@ router.post('/', function (req, res, next) {
  * @param  {Function} next Closure for next request
  */
 router.get('/', function (req, res, next) {
-  Presentation.find({ 'userId': mongoose.Types.ObjectId(req.user.id) }, function (err, presentations) {
+  Presentation.find({ 'ownerId': mongoose.Types.ObjectId(req.user.id) }, function (err, presentations) {
     if (err) {
       res.status(400)
       return res.json({
@@ -83,74 +83,6 @@ router.get('/', function (req, res, next) {
       success: true,
       message: 'Retrieved Presentations for User',
       presentations: presentations.map(p => p.tolistJSON())
-    })
-  })
-})
-
-/**
- * Retrieve IDs of All Presentations for a User
- *
- * GET /api/presentations/retrieve
- * Expects: Token of desired presentation
- * Token: Yes
- *
- * @param  {Object} req   Express request object
- * @param  {Object} res   Express response object
- * @param  {Function} next Closure for next request
- */
-router.get('/:id', function (req, res, next) {
-  id = req.params.id
-
-  Presentation.findById(id, function (err, presentation) {
-    if (err) {
-      res.status(400)
-      return res.json({
-          success: false,
-          message: err.message
-        })
-    }
-
-    res.status(200)
-    res.json({
-      success: true,
-      message: 'Retrieved Presentation',
-      presentation: presentation
-    })
-  })
-})
-
-/**
- * Retrieve IDs of All Presentations for a User
- *
- * GET /api/presentations/retrieve
- * Expects: Token of desired presentation
- * Token: Yes
- *
- * @param  {Object} req   Express request object
- * @param  {Object} res   Express response object
- * @param  {Function} next Closure for next request
- */
-router.post('/new', function (req, res, next) {
-  const p = new Presentation()
-
-  p.title = 'New Presentation'
-  p.slides = []
-  p.userId = mongoose.Types.ObjectId(req.user.id)
-
-  p.save(function (err) {
-    if (err) {
-      res.status(400)
-      return res.json({
-        success: false,
-        message: err.message
-      })
-    }
-
-    res.status(201)
-    res.json({
-      success: true,
-      message: 'Presentation created successfully.',
-      user: p.toJSON()
     })
   })
 })
@@ -194,6 +126,47 @@ router.put('/:id', function (req, res, next) {
 })
 
 /**
+ * Get presentation
+ *
+ * GET /api/presentations/:id
+ * Expects: ID of target presentation
+ * Token: Yes
+ *
+ * @param  {Object} req   Express request object
+ * @param  {Object} res   Express response object
+ * @param  {Function} next Closure for next request
+ */
+router.get('/:id', function (req, res, next) {
+  id = req.params.id
+
+  Presentation.findById(id, function (err, presentation) {
+    if (err) {
+      res.status(400)
+      return res.json({
+          success: false,
+          message: err.message
+        });
+    }
+
+    if (presentation) {
+      res.status(200)
+      res.json({
+          success: true,
+          message: 'Presentation Retrieved Successfully',
+          presentation: presentation.toJSON()
+      })
+    } else {
+      res.status(404)
+      res.json({
+        success: false,
+        message: `No Presentation found for id ${id}`
+      })
+    }
+    
+  })
+})
+
+/**
  * Delete presentation
  *
  * GET /api/presentations/delete
@@ -213,7 +186,7 @@ router.delete('/:id', function (req, res, next) {
       return res.json({
           success: false,
           message: err.message
-        }); s
+        });
     }
 
     presentation.remove(function (err) {
@@ -227,56 +200,4 @@ router.delete('/:id', function (req, res, next) {
   })
 })
 
-/**
- * Rename presentation
- *
- * GET /api/presentations/rename
- * Expects: ID of target presentation and new title
- * Token: Yes
- *
- * @param  {Object} req   Express request object
- * @param  {Object} res   Express response object
- * @param  {Function} next Closure for next request
- *
-router.post('/rename', function (req, res, next) {
-  if (req.body.presentationid == null || req.body.title == null) {
-    res.status(400)
-    return res.json({
-      success: false,
-      message: 'Must supply presentation ID and new title.'
-    })
-  }
-
-  id = req.body.presentationid
-
-  Presentation.findById(id, function (err, presentation) {
-    if (err) {
-      res.status(400)
-      return res.json({
-          success: false,
-          message: 'Likely cause: presentation does not exist. Full error: ' + err.message
-        })
-    }
-
-    presentation.title = req.body.title
-
-    presentation.save(function (err, updatedPresentation) {
-      if (err) {
-          res.status(400)
-          return res.json({
-              success: false,
-              message: err.message
-            })
-        }
-
-      res.status(200)
-      res.json({
-          success: true,
-          message: 'Renamed the presentation',
-          presentation: updatedPresentation
-        })
-    })
-  })
-}) */
-
-module.exports = router
+module.exports = router;
