@@ -14,35 +14,44 @@ const User = require('../../models/user.js')
  */
 
 const jwtMiddleware = function (req, res, next) {
-    // Ignore token requirement for registration and login
-  if (['/register', '/login'].indexOf(req.path) !== -1) return next()
+  // Ignore token requirement for registration and login
+  if (['/register', '/login'].indexOf(req.path) !== -1) {
+    return next()
+  }
 
-    var token = req.body.token || req.params.token || req.headers['authorization']
-    if (token === undefined) token = ''
-    token = token.replace('Bearer ', '')
+  var token = req.body.token || req.params.token || req.headers['authorization']
+  if (token === undefined) {
+    token = ''
+  }
+  token = token.replace('Bearer ', '')
 
-    // Verify that token exists and is valid;
-    if (token) {
-      jwt.verify(token, req.app.get('secret'), function (err, decoded) {
-          if (err) return res.status(401).json({ success: false, message: err.message })
-            User.findById(decoded.id, (err, user) => {
-              if (user) {
-                  req.user = user
-                    return next()
-                }
+  // Verify that token exists and is valid;
+  if (token) {
+    jwt.verify(token, req.app.get('secret'), function (err, decoded) {
+      if (err) return res.status(401).json({ success: false, message: err.message })
+      User.findById(decoded.id, (error, user) => {
+        if (user) {
+          req.user = user
+          return next()
+        } else if (error) {
+          res.status(401).send({
+            success: false,
+            message: 'An error occurred'
+          })
+        }
 
-              res.status(401).send({
-                  success: false,
-                  message: 'Bad Token'
-                })
-            })
-        })
-    } else {
-      return res.status(401).send({
+        res.status(401).send({
           success: false,
           message: 'Bad Token'
         })
-    }
+      })
+    })
+  } else {
+    return res.status(401).send({
+      success: false,
+      message: 'Bad Token'
+    })
+  }
 }
 
 module.exports = jwtMiddleware
