@@ -8,7 +8,7 @@ const User = require('../models/user.js')
 const Presentation = require('../models/presentation')
 
 const handleError = error => {
-  console.error(error)
+  return console.error(error)
 }
 
 /**
