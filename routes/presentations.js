@@ -7,6 +7,10 @@ const mongoose = require('mongoose')
 const User = require('../models/user.js')
 const Presentation = require('../models/presentation')
 
+const handleError = error => {
+  return console.error(error)
+}
+
 /**
  * Token Middleware
  *
@@ -52,7 +56,7 @@ router.post('/', function (req, res, next) {
     res.json({
       success: true,
       message: 'New Presentation Created Successfully',
-      presentation: newPresentation.toJSON(),
+      presentation: newPresentation.toJSON()
     })
   })
 })
@@ -105,9 +109,9 @@ router.put('/:id', function (req, res, next) {
     if (err) {
       res.status(400)
       return res.json({
-          success: false,
-          message: err.message
-        })
+        success: false,
+        message: err.message
+      })
     }
 
     presentation.title = req.body.title
@@ -117,10 +121,10 @@ router.put('/:id', function (req, res, next) {
       if (err) return handleError(err)
       res.status(200)
       res.json({
-          success: true,
-          message: 'Saved Changes to presentation',
-          presentation: updatedPresentation
-        })
+        success: true,
+        message: 'Saved Changes to presentation',
+        presentation: updatedPresentation
+      })
     })
   })
 })
@@ -143,17 +147,17 @@ router.get('/:id', function (req, res, next) {
     if (err) {
       res.status(400)
       return res.json({
-          success: false,
-          message: err.message
-        });
+        success: false,
+        message: err.message
+      })
     }
 
     if (presentation) {
       res.status(200)
       res.json({
-          success: true,
-          message: 'Presentation Retrieved Successfully',
-          presentation: presentation.toJSON()
+        success: true,
+        message: 'Presentation Retrieved Successfully',
+        presentation: presentation.toJSON()
       })
     } else {
       res.status(404)
@@ -162,7 +166,6 @@ router.get('/:id', function (req, res, next) {
         message: `No Presentation found for id ${id}`
       })
     }
-    
   })
 })
 
@@ -184,20 +187,20 @@ router.delete('/:id', function (req, res, next) {
     if (err) {
       res.status(400)
       return res.json({
-          success: false,
-          message: err.message
-        });
+        success: false,
+        message: err.message
+      })
     }
 
     presentation.remove(function (err) {
       if (err) return handleError(err)
       res.status(200)
       res.json({
-          success: true,
-          message: 'Deleted presentation'
-        })
+        success: true,
+        message: 'Deleted presentation'
+      })
     })
   })
 })
 
-module.exports = router;
+module.exports = router
