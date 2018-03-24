@@ -4,11 +4,10 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 
-const User = require('../models/user.js')
 const Presentation = require('../models/presentation')
 
 const handleError = error => {
-  return console.error(error)
+  return console.log(error)
 }
 
 /**
@@ -103,7 +102,7 @@ router.get('/', function (req, res, next) {
  * @param  {Function} next Closure for next request
  */
 router.put('/:id', function (req, res, next) {
-  id = req.params.id
+  const id = req.params.id
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
@@ -141,7 +140,7 @@ router.put('/:id', function (req, res, next) {
  * @param  {Function} next Closure for next request
  */
 router.get('/:id', function (req, res, next) {
-  id = req.params.id
+  const id = req.params.id
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
@@ -181,7 +180,7 @@ router.get('/:id', function (req, res, next) {
  * @param  {Function} next Closure for next request
  */
 router.delete('/:id', function (req, res, next) {
-  id = req.params.id
+  const id = req.params.id
 
   Presentation.findById(id, function (err, presentation) {
     if (err) {
