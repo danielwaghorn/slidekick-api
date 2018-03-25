@@ -22,9 +22,9 @@ module.exports = (socket) => {
     socket.to(socket.room).emit('renamed-presentation', newTitle)
   })
 
-  socket.on('reordered-slides', ({presentationId, slides}) => {
-    console.info(`${socket.user.forename} reordered slides - telling everyone else..`)
-    socket.to(socket.room).emit('reordered-slides', {presentationId, slides})
+  socket.on('modified-slides', ({presentationId, slides}) => {
+    console.info(`${socket.user.forename} modified slides - telling everyone else..`)
+    socket.to(socket.room).emit('modified-slides', slides)
   })
 
   socket.on('deleted-presentation', presentationId => {
