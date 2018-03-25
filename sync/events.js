@@ -32,33 +32,13 @@ module.exports = (socket) => {
     socket.to(socket.room).emit('deleted-presentation', presentationId)
   })
 
-  socket.on('deleted-slide', slideId => {
-    console.info(`${socket.user.forename} deleted a slide - telling everyone else..`)
-    socket.to(socket.room).emit('deleted-slide', slideId)
-  })
-
-  socket.on('changed-slide-background-colour', slide => {
+  socket.on('changed-slide-background-colour', ({slideIndex, slide}) => {
     console.info(`${socket.user.forename} changed the slide background colour - telling everyone else..`)
-    socket.to(socket.room).emit('changed-slide-background-colour', slide)
+    socket.to(socket.room).emit('changed-slide-background-colour', {slideIndex, slide})
   })
 
-  socket.on('created-element', elements => {
-    console.info(`${socket.user.forename} added a new element - telling everyone else..`)
-    socket.to(socket.room).emit('created-element', elements)
-  })
-
-  socket.on('deleted-element', element => {
-    console.info(`${socket.user.forename} deleted an element - telling everyone else..`)
-    socket.to(socket.room).emit('deleted-element', element)
-  })
-
-  socket.on('edited-text-element', element => {
-    console.info(`${socket.user.forename} edited a text element - telling everyone else..`)
-    socket.to(socket.room).emit('edited-text-element', element)
-  })
-
-  socket.on('edited-image-element', element => {
-    console.info(`${socket.user.forename} editing an image element - telling everyone else..`)
-    socket.to(socket.room).emit('edited-image-element', element)
+  socket.on('modified-elements', ({slideIndex, elements}) => {
+    console.info(`${socket.user.forename} changed elements - telling everyone else..`)
+    socket.to(socket.room).emit('modified-elements', {slideIndex, elements})
   })
 }
