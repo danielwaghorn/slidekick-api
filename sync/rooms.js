@@ -15,9 +15,9 @@ class Rooms {
     return this.roomExists(room) ? this.rooms.get(room) : false
   }
 
-  createRoom (room, users = []) {
+  createRoom (room) {
     return this.rooms.set(room, {
-      users: new Set(users)
+      users: new Map()
     })
   }
 
@@ -30,12 +30,25 @@ class Rooms {
   }
 
   addUserToRoom (room, user) {
-    return this.createIfNotExists(room).users.add(user)
+    const thisRoom = this.createIfNotExists(room)
+
+    if (!thisRoom.users.has(user)) {
+      console.log(`${user.forename} joined ${room}`)
+      return thisRoom.users.set(user.id, user.forename)
+    }
+  }
+
+  ejectUserFromRoom (room, user) {
+    console.log(`${user.forename} left ${room}`)
+    return this.rooms.get(room).users.delete(user.id)
   }
 
   usersInRoom (room) {
-    return this.rooms.get(room).users
+    return Array.from(this.rooms.get(room).users).map(([id, name]) => ({
+      id,
+      name
+    }))
   }
 }
 
-module.exports.Rooms = Rooms
+module.exports = new Rooms()
