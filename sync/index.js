@@ -1,5 +1,6 @@
 module.exports = server => {
-  var io = require('socket.io')(server)
+  const io = require('socket.io')(server)
+  const events = require('./events')
 
-  io.on('connection', require('./events'))
+  io.on('connection', socket => events(io, socket))
 }

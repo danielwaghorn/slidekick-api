@@ -1,20 +1,29 @@
-module.exports = (socket) => {
+const RoomsManager = require('./rooms')
+
+module.exports = (io, socket) => {
     // Join the room
   socket.on('joined-room', newUserData => {
     const {presentationId, user} = newUserData
     if (user) {
       if (socket.room) {
         socket.leave(socket.room)
+        RoomsManager.ejectUserFromRoom(socket.room, user)
       }
 
       const room = `room-${presentationId}`
       socket.user = user
-      console.log(`${user.forename} joined room ${presentationId}`)
-
       socket.room = room
+      RoomsManager.addUserToRoom(room, user)
       socket.join(room)
-      socket.to(room).emit('user-joined-room', user)
+
+      io.in(room).emit('refresh-users-list', RoomsManager.usersInRoom(room))
     }
+  })
+
+  socket.on('left-room', () => {
+    socket.leave(socket.room)
+    RoomsManager.ejectUserFromRoom(socket.room, socket.user)
+    io.in(socket.room).emit('refresh-users-list', RoomsManager.usersInRoom(socket.room))
   })
 
   socket.on('renamed-presentation', ({presentationId, newTitle}) => {
