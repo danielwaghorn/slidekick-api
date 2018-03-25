@@ -8,7 +8,7 @@ const router = express.Router()
 
 const User = require('../models/user.js')
 
-router.use(jwtMiddleware);
+router.use(jwtMiddleware)
 
 /**
  * Registration Route
@@ -57,7 +57,7 @@ router.post('/register', function (req, res, next) {
  * POST /api/user/register
  * Expects: JSON user credentials { email, password }
  * Token: No
- * 
+ *
  * @param  {Object} req   Express request object
  * @param  {Object} res   Express response object
  * @param  {Function} next Closure for next request
