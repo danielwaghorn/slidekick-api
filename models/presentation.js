@@ -50,18 +50,6 @@ var PresentationSchema = new Schema({
 
 PresentationSchema.plugin(uniqueValidator)
 
-PresentationSchema.pre('save', function (next) {
-  var presentation = this
-
-  PresentationModel.findOne({ownerId: presentation.ownerId, title: presentation.title}, function (err, presentationExists) {
-    if (presentationExists) {
-        return next(new Error('This user already has a presentation with this title.'))
-      } else {
-        next()
-      }
-  })
-})
-
 var PresentationModel = mongoose.model('Presentation', PresentationSchema)
 
 PresentationModel.prototype.tolistJSON = function () {
