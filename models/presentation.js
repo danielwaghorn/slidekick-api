@@ -23,6 +23,7 @@ var validateElement = function (elementString) {
 }
 
 var ElementSchema = new Schema({
+  id: { type: Number, required: true },
   type: { type: String, validate: [validateElement, 'Not a valid element.'], required: true },
   properties: { type: Object, required: true }
 })
