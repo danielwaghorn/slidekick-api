@@ -24,7 +24,8 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-if (process.env.NODE_ENV === 'production') {
+// if (process.env.NODE_ENV === 'production') {
+if (true) {
   var server = https.createServer({
     key: fs.readFileSync('/etc/nginx/ssl/slidekick.daniel-waghorn.com/304344/server.key'),
     cert: fs.readFileSync('/etc/nginx/ssl/slidekick.daniel-waghorn.com/304344/server.crt'),
